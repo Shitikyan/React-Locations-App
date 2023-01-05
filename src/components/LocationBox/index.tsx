@@ -12,7 +12,11 @@ const LocationBox: FC<IProps> = ({ location }) => {
     <div className={styles.locationBox}>
       <div className={styles.locationInfoTop}>
         <h6 className={styles.locationText}>{location.name}</h6>
-        <div className={styles.locationStatus}>
+        <div
+          className={`${styles.locationStatus} ${
+            location.status === 'inactive' ? styles.inactiveStatus : ''
+          }`}
+        >
           <h3 className={styles.locationText}>{location.status}</h3>
         </div>
       </div>

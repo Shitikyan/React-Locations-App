@@ -69,6 +69,7 @@ export default function LocationCreateModal({
                     onChange={(e) =>
                       setNewLocation({ ...newLocation, status: e.target.value })
                     }
+                    className={styles.statusSelect}
                   >
                     <option value="active">active</option>
                     <option value="inactive">inactive</option>
