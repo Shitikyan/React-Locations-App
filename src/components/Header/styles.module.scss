@@ -1,0 +1,31 @@
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  position: relative;
+  padding: 10px 0;
+  .title {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 18px;
+  }
+  .refreshButton {
+    max-width: 100px;
+    width: 100%;
+    background-color: #fff;
+    border: 1px solid #aaa;
+    border-radius: 4px;
+    cursor: pointer;
+    .refreshIcon {
+      width: 20px;
+    }
+  }
+  .addLocationButton {
+    cursor: pointer;
+    margin-right: 24px;
+    span {
+      font-size: 32px;
+    }
+  }
+}
