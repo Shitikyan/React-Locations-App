@@ -30,6 +30,7 @@ const OAuthCallback = () => {
             },
           );
           const data = await response.json();
+          console.log(data);
 
           setItem('access_token', data.access_token);
           setItem('refresh_token', data.refresh_token);

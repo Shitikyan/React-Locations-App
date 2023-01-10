@@ -1,12 +1,12 @@
 import { FC } from 'react';
-import { ILocation } from '../Home/types';
 import LocationBox from '../LocationBox';
 import InfiniteScroll from 'react-infinite-scroll-component';
+import { IResources } from '../Home/types';
 
 import styles from './styles.module.scss';
 
 interface IProps {
-  locations: ILocation[];
+  locations: IResources[];
   fetchMoreLocations: () => void;
 }
 

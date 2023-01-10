@@ -1,11 +1,9 @@
 export const getItem = (key: string) => {
   const item = localStorage.getItem(key);
-  if (item) {
-    return JSON.parse(item);
-  }
-  return null;
+  return item;
 };
 
 export const setItem = (key: string, data: any) => {
-  localStorage.setItem(key, JSON.stringify(data));
+  const dataSet = typeof data === 'string' ? data : JSON.stringify(data);
+  localStorage.setItem(key, dataSet);
 };
