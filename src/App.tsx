@@ -1,11 +1,20 @@
+import { useEffect } from 'react';
+import { Routes, Route } from 'react-router-dom';
+import { getItem } from './services/localstorage';
+import environment from './environment';
 import Home from './components/Home';
+import OAuthCallback from './components/OAuthCallback/OAuthCallback';
+import ErrorNotFound from './components/ErrorNotFound/ErrorNotFound';
+
 import './App.css';
 
 function App() {
   return (
-    <div className="App">
-      <Home />
-    </div>
+    <Routes>
+      <Route path="/" element={<Home />} />
+      <Route path="oAuth/oauthcallback" element={<OAuthCallback />} />
+      <Route path="*" element={<ErrorNotFound />} />
+    </Routes>
   );
 }
 

@@ -6,8 +6,8 @@ import Locations from '../Locations';
 import SearchInput from '../SearchInput';
 import { ILocation } from './types';
 import environment from '../../environment';
-import { axiosHandler } from '../../services';
 import { locationsMock } from './constants';
+import { getItem } from '../../services/localstorage';
 
 import styles from './styles.module.scss';
 
@@ -15,20 +15,19 @@ export default function Home() {
   const [locations, setLocations] = useState<ILocation[]>(locationsMock);
   const [filteredLocations, setFilteredLocations] = useState<ILocation[]>([]);
   const [search, setSearch] = useState<string>('');
-  const [page, setPage] = useState<number>(1);
 
   const getRandomString = () => (Math.random() + 1).toString(36).substring(7);
 
-  const fetchMoreLocations = async () => {
-    if (environment.IS_API_INTEGRATED) {
-      const { data } = await axiosHandler(
-        'GET',
-        `location/?page=${page}&limit=10}`,
-      );
-      setLocations([...locations, ...data.resources]);
-      setPage((pg) => pg++);
-      return;
+  useEffect(() => {
+    const token = getItem('access_token');
+    if (!token) {
+      const redirectURI = `${environment.BASE_URL}/oAuth/oauthcallback`;
+      const authURL = `https://gravity-dev.auth.us-east-1.amazoncognito.com/oauth2/authorize?response_type=code&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${redirectURI}`;
+      window.location.assign(authURL);
     }
+  }, []);
+
+  const fetchMoreLocations = async () => {
     const newLocations = [];
     for (let i = 0; i < 10; i++) {
       newLocations.push({
@@ -92,22 +91,13 @@ export default function Home() {
       ],
       ...newLocation,
     };
-    if (environment.IS_API_INTEGRATED) {
-      await axiosHandler('POST', 'location', mockedNewLocation);
-    }
     setLocations([mockedNewLocation, ...locations]);
   };
 
   const resetLocation = async () => {
     setSearch('');
     setFilteredLocations([]);
-
-    if (environment.IS_API_INTEGRATED) {
-      const { data } = await axiosHandler('GET', 'location');
-      setLocations(data.resources);
-    } else {
-      setLocations(locationsMock);
-    }
+    setLocations(locationsMock);
   };
 
   useEffect(() => {
@@ -122,16 +112,6 @@ export default function Home() {
       setFilteredLocations([]);
     }
   }, [locations, search]);
-
-  useEffect(() => {
-    if (environment.IS_API_INTEGRATED) {
-      const fetchData = async () => {
-        const { data } = await axiosHandler('GET', 'location');
-        setLocations(data.resources);
-      };
-      fetchData();
-    }
-  }, []);
 
   return (
     <div className={styles.home}>
