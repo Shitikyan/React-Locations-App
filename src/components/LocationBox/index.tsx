@@ -31,7 +31,7 @@ const LocationBox: FC<IProps> = ({ location, onClick }) => {
         <h6
           className={styles.locationUserName}
         >{`${location.patientRead?.resource.firstName} ${location.patientRead?.resource.lastName}`}</h6>
-        <Tag color="gold">
+        <Tag color="gold" className={styles.statusText}>
           {location.coverage[0].coverageRead?.resource.status ?
             location.coverage[0].coverageRead?.resource.status :
             'No Status'}

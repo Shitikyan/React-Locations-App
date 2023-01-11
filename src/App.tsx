@@ -4,6 +4,7 @@ import OAuthCallback from './components/OAuthCallback/OAuthCallback';
 import ErrorNotFound from './components/ErrorNotFound/ErrorNotFound';
 
 import './App.css';
+import './styles/globals.scss';
 
 function App() {
   return (
