@@ -7,6 +7,7 @@
   justify-content: center;
   cursor: pointer;
   transition: 0.3s all;
+  height: max-content;
   &:hover {
     box-shadow: var(--shadow);
   }

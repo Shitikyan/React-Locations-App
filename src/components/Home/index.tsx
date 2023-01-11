@@ -11,6 +11,7 @@ import environment from '../../environment';
 import { getItem } from '../../services/localstorage';
 import { IData, IResources } from './types';
 import DetailsSection from '../DetailsSection';
+import Button from '../Button';
 
 import styles from './styles.module.scss';
 
@@ -96,7 +97,7 @@ export default function Home() {
   useEffect(() => {
     const token = getItem('access_token');
     if (!token) {
-      const authURL = `${environment.AWS_AUTH_URL}?response_type=code&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${environment.AWS_REDIRECT_URL}`;
+      const authURL = `${environment.AWS_AUTH_URL}oauth2/authorize/?response_type=token&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${environment.AWS_REDIRECT_URL}oAuth/oauthcallback&scope=email+gravity/graphql+openid+phone+profile`;
       window.location.assign(authURL);
     }
   }, []);
@@ -111,10 +112,17 @@ export default function Home() {
     setPage(0);
   };
 
+  const logout = () => {
+    localStorage.removeItem('access_token');
+    const authURL = `${environment.AWS_AUTH_URL}logout?client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${window.location.origin}/oAuth/oauthcallback&response_type=token`;
+    window.location.assign(authURL);
+  };
+
   const onSetAppointment = (data: IResources) => [setSelectedAppointment(data)];
 
   return (
     <div className={styles.home}>
+      <Button text="Logout" onClick={logout} />
       <div className={styles.homeLeftSection}>
         <Header addNewLocation={addNewLocation} resetLocation={resetLocation} />
         <SearchInput search={search} setSearch={setSearch} />

@@ -11,7 +11,7 @@ import environment from './environment';
 import App from './App';
 
 const httpLink = createHttpLink({
-  uri: environment.APOLLO_CLIENT_LINK,
+  uri: `${environment.APOLLO_CLIENT_LINK}graphql`,
 });
 
 const authLink = setContext((_, { headers }) => {
