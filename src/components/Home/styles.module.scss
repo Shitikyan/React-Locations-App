@@ -10,44 +10,12 @@
     border: 1px solid #aaa;
     padding: 20px 30px;
     border-radius: 5px;
-  }
-  .homeRightSection {
-    max-width: 800px;
-    width: 100%;
-    border-bottom: 1px solid #aaa;
-    border-radius: 5px;
-    height: max-content;
-    .rightSectionHeader {
-      padding: 10px 20px;
-      display: flex;
-      justify-content: space-between;
-      border-bottom: 1px solid #aaa;
-      .headerRightSection {
-        display: flex;
-        column-gap: 20px;
-      }
-    }
-    .rightSectionContent {
-      padding: 10px 20px;
-      display: flex;
-      flex-direction: column;
-      row-gap: 10px;
-      .locationItem {
-        padding: 20px 30px;
-        border: 1px solid #aaa;
-        border-radius: 5px;
-        display: flex;
-        justify-content: flex-end;
-      }
-    }
+    min-height: 350px;
   }
   .loader {
     position: relative;
     left: 50%;
     top: 48px;
     transform: translateX(-50%);
-  }
-  .homeRightSection {
-    border: 1px solid #aaa;
   }
 }

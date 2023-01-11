@@ -3,18 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Tag } from 'antd';
 import Filters from '../Filters';
 import Header from '../Header';
-import Button from '../Button';
 import Locations from '../Locations';
 import SearchInput from '../SearchInput';
 import environment from '../../environment';
 import { getItem } from '../../services/localstorage';
 import { IData, IResources } from './types';
-import RefreshIcon from '../../images/refresh-icon.png';
-import maximizeIcon from '../../images/maximizeIcon.png';
-import moreIcon from '../../images/moreIcon.png';
+import DetailsSection from '../DetailsSection';
 
 import styles from './styles.module.scss';
 
@@ -76,6 +72,8 @@ export default function Home() {
     data?.priorAuthList.resources as IResources[],
   );
   const [page, setPage] = useState<number>(0);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<IResources | null>(null);
 
   const allPages = useMemo(() => data?.priorAuthList.pages || 0, [data]);
 
@@ -110,8 +108,10 @@ export default function Home() {
   const addNewLocation = async () => {};
 
   const resetLocation = async () => {
-    setLocations(data?.priorAuthList.resources as IResources[]);
+    setPage(0);
   };
+
+  const onSetAppointment = (data: IResources) => [setSelectedAppointment(data)];
 
   return (
     <div className={styles.home}>
@@ -125,6 +125,7 @@ export default function Home() {
             setPage={setCurrentPage}
             page={page}
             allPages={allPages}
+            onSetAppointment={onSetAppointment}
           />
         ) : (
           <Spin
@@ -133,26 +134,7 @@ export default function Home() {
           />
         )}
       </div>
-      <div className={styles.homeRightSection}>
-        <div className={styles.rightSectionHeader}>
-          <Button icon={RefreshIcon} />
-          <div className={styles.headerRightSection}>
-            <Button icon={maximizeIcon} />
-            <Button icon={moreIcon} />
-          </div>
-        </div>
-        <div className={styles.rightSectionContent}>
-          <div className={styles.locationItem}>
-            <Tag color="magenta">not initiated</Tag>
-          </div>
-          <div className={styles.locationItem}>
-            <Tag color="magenta">not initiated</Tag>
-          </div>
-          <div className={styles.locationItem}>
-            <Tag color="magenta">not initiated</Tag>
-          </div>
-        </div>
-      </div>
+      <DetailsSection detailsData={selectedAppointment?.coverage} />
     </div>
   );
 }

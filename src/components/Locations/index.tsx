@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useMemo } from 'react';
 import { Pagination } from 'antd';
 import LocationBox from '../LocationBox';
 import { IResources } from '../Home/types';
@@ -10,20 +10,33 @@ interface IProps {
   allPages: number;
   locations: IResources[];
   setPage: (x: number) => void;
+  onSetAppointment: (data: IResources) => void;
 }
 
-const Locations: FC<IProps> = ({ page, allPages, locations, setPage }) => {
+const Locations: FC<IProps> = ({
+  page,
+  allPages,
+  locations,
+  setPage,
+  onSetAppointment,
+}) => {
+  const currentPage = useMemo(() => page + 1, [page]);
+
   return (
     <div className={styles.locations}>
       {locations?.length ? (
         <>
           {locations.map((item) => (
-            <LocationBox location={item} key={item.id} />
+            <LocationBox
+              location={item}
+              key={item.id}
+              onClick={onSetAppointment}
+            />
           ))}
           <Pagination
             className={styles.pagination}
             onChange={(currentPage) => setPage(currentPage - 1)}
-            defaultCurrent={page + 1}
+            defaultCurrent={currentPage}
             total={allPages}
           />
         </>

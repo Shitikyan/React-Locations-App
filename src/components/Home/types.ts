@@ -14,7 +14,7 @@ export interface IResources {
   patientRead: IPatientRead;
 }
 
-interface ICoverage {
+export interface ICoverage {
   coverageRead: ICoverageRead;
   created: Date;
 }
@@ -24,7 +24,10 @@ interface ICoverageRead {
 }
 
 interface ICoverageReadResource {
+  id: string;
   status: string;
+  groupNumber: string;
+  subscriberId: string;
 }
 
 interface IPatientRead {

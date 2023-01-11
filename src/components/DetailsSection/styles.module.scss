@@ -1,0 +1,39 @@
+.homeRightSection {
+  max-width: 800px;
+  width: 100%;
+  border: 1px solid #aaa;
+  border-bottom: 1px solid #aaa;
+  border-radius: 5px;
+  height: max-content;
+  .rightSectionHeader {
+    padding: 10px 20px;
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid #aaa;
+    .headerRightSection {
+      display: flex;
+      column-gap: 20px;
+    }
+  }
+  .rightSectionContent {
+    padding: 10px 20px;
+    display: flex;
+    flex-direction: column;
+    row-gap: 10px;
+    .locationItem {
+      padding: 20px 30px;
+      border: 1px solid #aaa;
+      border-radius: 5px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      h4 {
+        margin-top: 0;
+        margin-bottom: 16px;
+      }
+      h6 {
+        margin-top: 16px;
+      }
+    }
+  }
+}
