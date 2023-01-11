@@ -11,11 +11,7 @@ export default function Filters() {
   return (
     <div className={styles.filtersSection}>
       {filters.map((filter) => (
-        <Button
-          text={filter.name}
-          key={filter.name}
-          disabled={filter.disabled}
-        />
+        <Button text={filter.name} key={filter.name} />
       ))}
     </div>
   );

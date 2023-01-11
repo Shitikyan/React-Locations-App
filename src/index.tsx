@@ -7,11 +7,11 @@ import {
   createHttpLink,
 } from '@apollo/client';
 import { setContext } from '@apollo/client/link/context';
-
+import environment from './environment';
 import App from './App';
 
 const httpLink = createHttpLink({
-  uri: 'https://graph.dev.jit.care/graphql',
+  uri: environment.APOLLO_CLIENT_LINK,
 });
 
 const authLink = setContext((_, { headers }) => {

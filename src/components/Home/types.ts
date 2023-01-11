@@ -4,6 +4,7 @@ export interface IData {
 
 interface IPriorAuthList {
   resources: IResources[];
+  pages: number;
 }
 
 export interface IResources {
@@ -15,7 +16,7 @@ export interface IResources {
 
 interface ICoverage {
   coverageRead: ICoverageRead;
-  created: Date
+  created: Date;
 }
 
 interface ICoverageRead {
