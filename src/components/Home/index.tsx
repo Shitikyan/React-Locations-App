@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useEffect, useMemo, useState } from 'react';
+import { useNavigate } from 'react-router';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -8,7 +9,7 @@ import Header from '../Header';
 import Locations from '../Locations';
 import SearchInput from '../SearchInput';
 import environment from '../../environment';
-import { getItem } from '../../services/localstorage';
+import { getItem, setItem } from '../../services/localstorage';
 import { IData, IResources } from './types';
 import DetailsSection from '../DetailsSection';
 import Button from '../Button';
@@ -65,6 +66,12 @@ const GET_TIMELINE = gql`
   }
 `;
 
+export const logout = () => {
+  localStorage.removeItem('access_token');
+  const authURL = `${environment.AWS_AUTH_URL}logout?client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${window.location.origin}&response_type=token`;
+  window.location.assign(authURL);
+};
+
 export default function Home() {
   const [getAppointments, { data, loading }] =
     useLazyQuery<IData>(GET_TIMELINE);
@@ -75,6 +82,23 @@ export default function Home() {
   const [page, setPage] = useState<number>(0);
   const [selectedAppointment, setSelectedAppointment] =
     useState<IResources | null>(null);
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const getAccessToken = () => {
+      const hash = window.location.hash.substring(1);
+      const params = new URLSearchParams(hash);
+      const accessToken = params.get('access_token');
+      if (accessToken) {
+        setItem('access_token', accessToken);
+        navigate('/');
+      }
+    };
+    const token = getItem('access_token');
+    if (!token) {
+      getAccessToken();
+    }
+  }, [navigate]);
 
   const allPages = useMemo(() => data?.priorAuthList.pages || 0, [data]);
 
@@ -97,7 +121,7 @@ export default function Home() {
   useEffect(() => {
     const token = getItem('access_token');
     if (!token) {
-      const authURL = `${environment.AWS_AUTH_URL}oauth2/authorize/?response_type=token&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${environment.AWS_REDIRECT_URL}oAuth/oauthcallback&scope=email+gravity/graphql+openid+phone+profile`;
+      const authURL = `${environment.AWS_AUTH_URL}oauth2/authorize/?response_type=token&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${window.location.origin}&scope=email+gravity/graphql+openid+phone+profile`;
       window.location.assign(authURL);
     }
   }, []);
@@ -114,7 +138,7 @@ export default function Home() {
 
   const logout = () => {
     localStorage.removeItem('access_token');
-    const authURL = `${environment.AWS_AUTH_URL}logout?client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${window.location.origin}/oAuth/oauthcallback&response_type=token`;
+    const authURL = `${environment.AWS_AUTH_URL}logout?client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${window.location.origin}&response_type=token`;
     window.location.assign(authURL);
   };
 
