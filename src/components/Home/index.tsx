@@ -1,6 +1,8 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router';
+import jwtDecode from 'jwt-decode';
+import moment from 'moment';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -15,6 +17,7 @@ import DetailsSection from '../DetailsSection';
 import Button from '../Button';
 
 import styles from './styles.module.scss';
+
 
 const GET_TIMELINE = gql`
   query Resources(
@@ -72,6 +75,18 @@ export const logout = () => {
   window.location.assign(authURL);
 };
 
+const tenantPrefix = 'tenant_';
+const getUserInformation = (payload: any) => {
+  const tenants = payload['cognito:groups'];
+  let tenantId = '';
+  if (tenants.length > 0) {
+    tenantId = tenants[0].slice(tenantPrefix.length);
+  }
+  payload['tenantId'] = tenantId;
+
+  return payload;
+};
+
 export default function Home() {
   const [getAppointments, { data, loading }] =
     useLazyQuery<IData>(GET_TIMELINE);
@@ -84,16 +99,22 @@ export default function Home() {
     useState<IResources | null>(null);
   const navigate = useNavigate();
 
+  const getAccessToken = () => {
+    const hash = window.location.hash.substring(1);
+    const params = new URLSearchParams(hash);
+    console.log('params', params);
+    const accessToken = params.get('access_token');
+    if (accessToken) {
+      const tokenId = params.get('id_token');
+      const payload = jwtDecode(tokenId!);
+      const user = getUserInformation(payload);
+      setItem('user', user);
+      setItem('access_token', accessToken);
+      navigate('/');
+    }
+  };
+
   useEffect(() => {
-    const getAccessToken = () => {
-      const hash = window.location.hash.substring(1);
-      const params = new URLSearchParams(hash);
-      const accessToken = params.get('access_token');
-      if (accessToken) {
-        setItem('access_token', accessToken);
-        navigate('/');
-      }
-    };
     const token = getItem('access_token');
     if (!token) {
       getAccessToken();
@@ -103,13 +124,21 @@ export default function Home() {
   const allPages = useMemo(() => data?.priorAuthList.pages || 0, [data]);
 
   useEffect(() => {
+    const userStr = getItem('user');
+    if (!userStr) {
+      return;
+    }
+    const user = JSON.parse(userStr);
+    const date = moment();
+    const dateString = date.format('YYYY-MM-DD[T]HH:mm:ssZ');
+    console.log(dateString);
     getAppointments({
       variables: {
-        tenant: '940e8edf-edd9-401d-a21a-10f866fbdb3f',
+        tenant: user.tenantId,
         appointmentStatus: 'booked',
-        appointmentStart: '2023-01-10T09:58:29-05:00',
+        appointmentStart: dateString,
         page,
-        limit: 7,
+        limit: 7, // Change to page size
       },
     });
   }, [getAppointments, page]);
