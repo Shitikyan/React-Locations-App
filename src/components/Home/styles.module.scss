@@ -1,5 +1,21 @@
 .home {
   margin: 0 auto;
-  max-width: 400px;
   width: 100%;
+  display: flex;
+  column-gap: 10px;
+  justify-content: center;
+  .homeLeftSection {
+    max-width: 450px;
+    width: 100%;
+    border: 1px solid var(--gray_100);
+    padding: 20px 30px;
+    border-radius: 5px;
+    min-height: 350px;
+  }
+  .loader {
+    position: relative;
+    left: 50%;
+    top: 48px;
+    transform: translateX(-50%);
+  }
 }

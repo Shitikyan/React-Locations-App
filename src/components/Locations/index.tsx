@@ -1,32 +1,45 @@
-import { FC } from 'react';
-import { ILocation } from '../Home/types';
+import { FC, useMemo } from 'react';
+import { Pagination } from 'antd';
 import LocationBox from '../LocationBox';
-import InfiniteScroll from 'react-infinite-scroll-component';
+import { IResources } from '../Home/types';
 
 import styles from './styles.module.scss';
 
 interface IProps {
-  locations: ILocation[];
-  fetchMoreLocations: () => void;
+  page: number;
+  allPages: number;
+  locations: IResources[];
+  setPage: (x: number) => void;
+  onSetAppointment: (data: IResources) => void;
 }
 
-const Locations: FC<IProps> = ({ locations, fetchMoreLocations }) => {
+const Locations: FC<IProps> = ({
+  page,
+  allPages,
+  locations,
+  setPage,
+  onSetAppointment,
+}) => {
+  const currentPage = useMemo(() => page + 1, [page]);
+
   return (
     <div className={styles.locations}>
-      {locations.length ? (
-        <InfiniteScroll
-          dataLength={locations.length}
-          next={fetchMoreLocations}
-          // eslint-disable-next-line max-len
-          hasMore={true} // hardcoded, will be changed after proper api integration
-          loader={<h4>Loading...</h4>}
-          scrollThreshold={1}
-          className={styles.locations}
-        >
+      {locations?.length ? (
+        <>
           {locations.map((item) => (
-            <LocationBox location={item} key={item.id} />
+            <LocationBox
+              location={item}
+              key={item.id}
+              onClick={onSetAppointment}
+            />
           ))}
-        </InfiniteScroll>
+          <Pagination
+            className={styles.pagination}
+            onChange={(currentPage) => setPage(currentPage - 1)}
+            defaultCurrent={currentPage}
+            total={allPages}
+          />
+        </>
       ) : (
         <div className={styles.noResult}>No Result</div>
       )}

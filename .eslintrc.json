@@ -29,6 +29,17 @@
     "react/react-in-jsx-scope": "off",
     "linebreak-style": 0,
     "object-curly-spacing": ["error", "always"],
-    "@typescript-eslint/no-non-null-assertion": 0
+    "@typescript-eslint/no-non-null-assertion": 0,
+    "max-len": [
+      "error",
+      {
+        "code": 100,
+        "tabWidth": 2,
+        "ignoreComments": true, //"comments": 80
+        "ignoreUrls": true,
+        "ignoreStrings": true,
+        "ignoreTemplateLiterals": true
+      }
+    ]
   }
 }

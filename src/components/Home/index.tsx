@@ -1,147 +1,140 @@
-import { useEffect, useState } from 'react';
+/* eslint-disable @typescript-eslint/no-empty-function */
+import { useEffect, useMemo, useState } from 'react';
+import { gql, useLazyQuery } from '@apollo/client';
+import { Spin } from 'antd';
+import { LoadingOutlined } from '@ant-design/icons';
 import Filters from '../Filters';
 import Header from '../Header';
-import { INewLocation } from '../LocationCreateModal/types';
 import Locations from '../Locations';
 import SearchInput from '../SearchInput';
-import { ILocation } from './types';
 import environment from '../../environment';
-import { axiosHandler } from '../../services';
-import { locationsMock } from './constants';
+import { getItem } from '../../services/localstorage';
+import { IData, IResources } from './types';
+import DetailsSection from '../DetailsSection';
 
 import styles from './styles.module.scss';
 
+const GET_TIMELINE = gql`
+  query Resources(
+    $tenant: String!
+    $appointmentStatus: AppointmentStatus
+    $appointmentStart: String
+    $limit: Int
+    $page: Int
+  ) {
+    priorAuthList(
+      tenant: $tenant
+      appointmentStatus: $appointmentStatus
+      appointmentStart: $appointmentStart
+      limit: $limit
+      page: $page
+    ) {
+      resources {
+        id
+        coverage {
+          coverageRead {
+            resource {
+              organizationRead {
+                resource {
+                  id
+                  name
+                }
+              }
+              groupNumber
+              payor
+              status
+              subscriberId
+              id
+            }
+          }
+          order
+          id
+          created
+        }
+        patientRead {
+          resource {
+            firstName
+            lastName
+          }
+        }
+        appointmentStart
+      }
+      pages
+    }
+  }
+`;
+
 export default function Home() {
-  const [locations, setLocations] = useState<ILocation[]>(locationsMock);
-  const [filteredLocations, setFilteredLocations] = useState<ILocation[]>([]);
+  const [getAppointments, { data, loading }] =
+    useLazyQuery<IData>(GET_TIMELINE);
   const [search, setSearch] = useState<string>('');
-  const [page, setPage] = useState<number>(1);
+  const [locations, setLocations] = useState<IResources[]>(
+    data?.priorAuthList.resources as IResources[],
+  );
+  const [page, setPage] = useState<number>(0);
+  const [selectedAppointment, setSelectedAppointment] =
+    useState<IResources | null>(null);
 
-  const getRandomString = () => (Math.random() + 1).toString(36).substring(7);
-
-  const fetchMoreLocations = async () => {
-    if (environment.IS_API_INTEGRATED) {
-      const { data } = await axiosHandler(
-        'GET',
-        `location/?page=${page}&limit=10}`,
-      );
-      setLocations([...locations, ...data.resources]);
-      setPage((pg) => pg++);
-      return;
-    }
-    const newLocations = [];
-    for (let i = 0; i < 10; i++) {
-      newLocations.push({
-        id: getRandomString(),
-        tenant: getRandomString(),
-        name: getRandomString(),
-        status: 'active',
-        managingOrganization: getRandomString(),
-        alias: getRandomString(),
-        description: getRandomString(),
-        type: getRandomString(),
-        address: getRandomString(),
-        npi: getRandomString(),
-        taxId: getRandomString(),
-        partOf: getRandomString(),
-        updatedAt: 1672828826399,
-        telecom: [
-          {
-            rank: 1,
-            system: getRandomString(),
-            use: getRandomString(),
-            value: getRandomString(),
-          },
-          {
-            rank: 2,
-            system: getRandomString(),
-            use: getRandomString(),
-            value: getRandomString(),
-          },
-        ],
-      });
-    }
-    setLocations([...locations, ...newLocations]);
-  };
-
-  const addNewLocation = async (newLocation: INewLocation) => {
-    const mockedNewLocation = {
-      id: getRandomString(),
-      tenant: getRandomString(),
-      managingOrganization: getRandomString(),
-      alias: getRandomString(),
-      description: getRandomString(),
-      type: getRandomString(),
-      npi: getRandomString(),
-      taxId: getRandomString(),
-      partOf: getRandomString(),
-      updatedAt: Date.now(),
-      telecom: [
-        {
-          rank: 1,
-          system: getRandomString(),
-          use: getRandomString(),
-          value: getRandomString(),
-        },
-        {
-          rank: 2,
-          system: getRandomString(),
-          use: getRandomString(),
-          value: getRandomString(),
-        },
-      ],
-      ...newLocation,
-    };
-    if (environment.IS_API_INTEGRATED) {
-      await axiosHandler('POST', 'location', mockedNewLocation);
-    }
-    setLocations([mockedNewLocation, ...locations]);
-  };
-
-  const resetLocation = async () => {
-    setSearch('');
-    setFilteredLocations([]);
-
-    if (environment.IS_API_INTEGRATED) {
-      const { data } = await axiosHandler('GET', 'location');
-      setLocations(data.resources);
-    } else {
-      setLocations(locationsMock);
-    }
-  };
+  const allPages = useMemo(() => data?.priorAuthList.pages || 0, [data]);
 
   useEffect(() => {
-    if (search) {
-      setFilteredLocations(
-        locations.filter(
-          (item) =>
-            item.address.includes(search) || item.name?.includes(search),
-        ),
-      );
-    } else {
-      setFilteredLocations([]);
-    }
-  }, [locations, search]);
+    getAppointments({
+      variables: {
+        tenant: '940e8edf-edd9-401d-a21a-10f866fbdb3f',
+        appointmentStatus: 'booked',
+        appointmentStart: '2023-01-10T09:58:29-05:00',
+        page,
+        limit: 7,
+      },
+    });
+  }, [getAppointments, page]);
 
   useEffect(() => {
-    if (environment.IS_API_INTEGRATED) {
-      const fetchData = async () => {
-        const { data } = await axiosHandler('GET', 'location');
-        setLocations(data.resources);
-      };
-      fetchData();
+    setLocations(data?.priorAuthList.resources as IResources[]);
+  }, [data]);
+
+  useEffect(() => {
+    const token = getItem('access_token');
+    if (!token) {
+      const authURL = `${environment.AWS_AUTH_URL}?response_type=code&client_id=${environment.AWS_CLIENT_ID}&redirect_uri=${environment.AWS_REDIRECT_URL}`;
+      window.location.assign(authURL);
     }
   }, []);
 
+  const setCurrentPage = (currentPage: number) => {
+    setPage(currentPage);
+  };
+
+  const addNewLocation = async () => {};
+
+  const resetLocation = async () => {
+    setPage(0);
+  };
+
+  const onSetAppointment = (data: IResources) => [setSelectedAppointment(data)];
+
   return (
     <div className={styles.home}>
-      <Header addNewLocation={addNewLocation} resetLocation={resetLocation} />
-      <SearchInput search={search} setSearch={setSearch} />
-      <Filters />
-      <Locations
-        locations={search ? filteredLocations : locations}
-        fetchMoreLocations={fetchMoreLocations}
-      />
+      <div className={styles.homeLeftSection}>
+        <Header addNewLocation={addNewLocation} resetLocation={resetLocation} />
+        <SearchInput search={search} setSearch={setSearch} />
+        <Filters />
+        {!loading ? (
+          <Locations
+            locations={locations}
+            setPage={setCurrentPage}
+            page={page}
+            allPages={allPages}
+            onSetAppointment={onSetAppointment}
+          />
+        ) : (
+          <Spin
+            className={styles.loader}
+            indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+          />
+        )}
+      </div>
+      <DetailsSection detailsData={selectedAppointment?.coverage} />
     </div>
   );
 }

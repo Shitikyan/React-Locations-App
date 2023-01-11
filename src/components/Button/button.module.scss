@@ -1,0 +1,22 @@
+.button {
+  border: 2px solid var(--black_100);
+  padding: 5px;
+  border-radius: 5px;
+  min-width: 60px;
+  display: flex;
+  justify-content: center;
+  cursor: pointer;
+  transition: 0.3s all;
+  &:hover {
+    box-shadow: var(--shadow);
+  }
+
+  span {
+    font-weight: bold;
+    font-size: 14px;
+  }
+  img {
+    width: 15px;
+    height: 15px;
+  }
+}

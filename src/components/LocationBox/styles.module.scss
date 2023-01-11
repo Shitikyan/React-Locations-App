@@ -1,6 +1,7 @@
 .locationBox {
-  border: 1px solid #aaa;
+  border: 1px solid var(--gray_100);
   border-radius: 4px;
+  cursor: pointer;
   padding: 16px 24px 16px 32px;
   display: flex;
   flex-direction: column;
@@ -9,20 +10,16 @@
   width: 100%;
   transition: 0.3s all;
   &:hover {
-    box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px,
-      rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
+    box-shadow: var(--shadow);
   }
   .locationInfoTop {
     width: 100%;
     display: flex;
     justify-content: space-between;
-    .locationStatus {
-      background-color: rgb(242, 208, 143);
-      border-radius: 50px;
-      padding: 2px 8px;
-      &.inactiveStatus {
-        background-color: rgb(250, 103, 103);
-      }
+    margin-bottom: 10px;
+    .statusText {
+      font-size: 14px;
+      margin: 0;
     }
   }
   .locationInfoBottom {
@@ -34,11 +31,38 @@
       margin-top: 16px;
     }
     time {
-      margin-top: 16px;
-      color: rgb(85, 85, 85);
+      color: var(--gray_100);
     }
   }
   .locationText {
     margin: 0;
+  }
+  .locationUserName {
+    margin: 0;
+    font-weight: bold;
+    font-size: 12px;
+  }
+  .locationId {
+    font-size: 14px;
+    font-weight: 500;
+    margin-bottom: 16px;
+  }
+  .locationDate {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    column-gap: 5px;
+    img {
+      width: 15px;
+      height: 15px;
+    }
+    span {
+      font-weight: 500;
+      font-size: 14px;
+      margin: 0;
+    }
+    .locationAgo {
+      margin: 0 !important;
+    }
   }
 }

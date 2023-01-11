@@ -31,7 +31,7 @@ export default function Header({ addNewLocation, resetLocation }: IProps) {
       <button className={styles.refreshButton} onClick={resetLocation}>
         <img src={RefreshIcon} className={styles.refreshIcon} />
       </button>
-      <h2 className={styles.title}>Locations</h2>
+      <h2 className={styles.title}>Coverage</h2>
       <div className={styles.addLocationButton} onClick={onOpenModal}>
         <span>+</span>
       </div>
