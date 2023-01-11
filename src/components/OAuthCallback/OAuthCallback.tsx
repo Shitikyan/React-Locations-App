@@ -15,20 +15,17 @@ const OAuthCallback = () => {
           grant_type: 'authorization_code',
           client_id: environment.AWS_CLIENT_ID,
           client_secret: environment.AWS_CLIENT_SECRET,
-          redirect_uri: `${environment.BASE_URL}/oAuth/oauthcallback`,
+          redirect_uri: environment.AWS_REDIRECT_URL,
           code,
         };
         try {
-          const response = await fetch(
-            'https://gravity-dev.auth.us-east-1.amazoncognito.com/oauth2/token',
-            {
-              method: 'POST',
-              headers: {
-                'Content-Type': 'application/x-www-form-urlencoded',
-              },
-              body: new URLSearchParams(config),
+          const response = await fetch(environment.AWS_TOKEN_URL, {
+            method: 'POST',
+            headers: {
+              'Content-Type': 'application/x-www-form-urlencoded',
             },
-          );
+            body: new URLSearchParams(config),
+          });
           const data = await response.json();
           console.log(data);
 
