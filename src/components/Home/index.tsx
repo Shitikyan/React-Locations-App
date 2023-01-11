@@ -3,13 +3,18 @@ import { useEffect, useMemo, useState } from 'react';
 import { gql, useLazyQuery } from '@apollo/client';
 import { Spin } from 'antd';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Tag } from 'antd';
 import Filters from '../Filters';
 import Header from '../Header';
+import Button from '../Button';
 import Locations from '../Locations';
 import SearchInput from '../SearchInput';
 import environment from '../../environment';
 import { getItem } from '../../services/localstorage';
 import { IData, IResources } from './types';
+import RefreshIcon from '../../images/refresh-icon.png';
+import maximizeIcon from '../../images/maximizeIcon.png';
+import moreIcon from '../../images/moreIcon.png';
 
 import styles from './styles.module.scss';
 
@@ -110,22 +115,44 @@ export default function Home() {
 
   return (
     <div className={styles.home}>
-      <Header addNewLocation={addNewLocation} resetLocation={resetLocation} />
-      <SearchInput search={search} setSearch={setSearch} />
-      <Filters />
-      {!loading ? (
-        <Locations
-          locations={locations}
-          setPage={setCurrentPage}
-          page={page}
-          allPages={allPages}
-        />
-      ) : (
-        <Spin
-          className={styles.loader}
-          indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
-        />
-      )}
+      <div className={styles.homeLeftSection}>
+        <Header addNewLocation={addNewLocation} resetLocation={resetLocation} />
+        <SearchInput search={search} setSearch={setSearch} />
+        <Filters />
+        {!loading ? (
+          <Locations
+            locations={locations}
+            setPage={setCurrentPage}
+            page={page}
+            allPages={allPages}
+          />
+        ) : (
+          <Spin
+            className={styles.loader}
+            indicator={<LoadingOutlined style={{ fontSize: 32 }} spin />}
+          />
+        )}
+      </div>
+      <div className={styles.homeRightSection}>
+        <div className={styles.rightSectionHeader}>
+          <Button icon={RefreshIcon} />
+          <div className={styles.headerRightSection}>
+            <Button icon={maximizeIcon} />
+            <Button icon={moreIcon} />
+          </div>
+        </div>
+        <div className={styles.rightSectionContent}>
+          <div className={styles.locationItem}>
+            <Tag color="magenta">not initiated</Tag>
+          </div>
+          <div className={styles.locationItem}>
+            <Tag color="magenta">not initiated</Tag>
+          </div>
+          <div className={styles.locationItem}>
+            <Tag color="magenta">not initiated</Tag>
+          </div>
+        </div>
+      </div>
     </div>
   );
 }

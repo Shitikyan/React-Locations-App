@@ -4,6 +4,7 @@ import TimeAgo from 'react-timeago';
 import { IResources } from '../Home/types';
 import calendarIcon from '../../images/calendarIcon.png';
 import clockIcon from '../../images/clockIcon.png';
+import { Tag } from 'antd';
 
 import styles from './styles.module.scss';
 
@@ -29,13 +30,11 @@ const LocationBox: FC<IProps> = ({ location }) => {
         <h6
           className={styles.locationUserName}
         >{`${location.patientRead?.resource.firstName} ${location.patientRead?.resource.lastName}`}</h6>
-        <div className={styles.locationStatus}>
-          <h3 className={styles.statusText}>
+          <Tag color="gold">
             {location.coverage[0].coverageRead?.resource.status ?
               location.coverage[0].coverageRead?.resource.status :
               'No Status'}
-          </h3>
-        </div>
+          </Tag>
       </div>
       <h3 className={styles.locationId}>{location.id}</h3>
       <div className={styles.locationInfoBottom}>
